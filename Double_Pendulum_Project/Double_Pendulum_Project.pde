@@ -5,10 +5,11 @@ float x2tem = 0;
 float y2tem = 0;
 float pinx = 210;
 float piny = 210;
-float grav = 15;
+float grav = 3;
 float mass1 = 1;
 float mass2 = 1;
-float length = 100.0;
+float length = 30.0;
+float length2 = 100.0;
 float start_angle = 120.0;
 float start_angle2 = 60.0;
 float ang_veloc = 0;
@@ -27,12 +28,12 @@ float x2p = 0;
 float y2p = 0;
 float x3p = 0;
 float y3p = 0;
-float xtem = (float) ((float) (pinx + length * Math.sin(ang)) + length * Math.sin(ang2));
-float ytem = (float) ((float) (piny + length * Math.cos(ang)) + length * Math.cos(ang2));
+float xtem = (float) ((float) (pinx + length * Math.sin(ang)) + length2 * Math.sin(ang2));
+float ytem = (float) ((float) (piny + length * Math.cos(ang)) + length2 * Math.cos(ang2));
 float xtem1 = (float) (pinx + length * Math.sin(ang));
 float ytem1 = (float) (piny + length * Math.cos(ang));
-float xtem2 = (float) ((float) (pinx + length * Math.sin(ang01)) + length * Math.sin(ang02));
-float ytem2 = (float) ((float) (piny + length * Math.cos(ang01)) + length * Math.cos(ang02));
+float xtem2 = (float) ((float) (pinx + length * Math.sin(ang01)) + length2 * Math.sin(ang02));
+float ytem2 = (float) ((float) (piny + length * Math.cos(ang01)) + length2 * Math.cos(ang02));
 float xtem12 = (float) (pinx + length * Math.sin(ang01));
 float ytem12 = (float) (piny + length * Math.cos(ang01));
 float dt = 0.1;
@@ -52,12 +53,12 @@ void setup(){
 
 void pend3(){
   fill(150,150,150,225);
-  rect(-1, -1, 2*length+pinx+20, 701);
+  rect(-1, -1, (200)+pinx+20, 701);
   //background(200);
   float x2 = (float) (pinx + length * Math.sin(ang));
   float y2 = (float) (piny + length * Math.cos(ang));
-  float x3 = (float) (x2 + length * Math.sin(ang2));
-  float y3 = (float) (y2 + length * Math.cos(ang2));
+  float x3 = (float) (x2 + length2 * Math.sin(ang2));
+  float y3 = (float) (y2 + length2 * Math.cos(ang2));
   fill(255);
   stroke(0);
   strokeWeight(1);
@@ -67,15 +68,16 @@ void pend3(){
   ellipse(x3, y3, 10.0, 10.0);
   
   ken = 0.5*(0.5*(mass1*ang_veloc*ang_veloc*length*length) + 0.5*(mass2*(length*length*ang_veloc*ang_veloc + 
-  length*length*ang_veloc2*ang_veloc2 + 2*length*length*ang_veloc*ang_veloc2*(float)Math.cos(ang-ang2))));
-  potential = grav*(0.5*(mass1*(piny+length-y2)) + 0.5*(mass2*(piny+2*length-y3)));
+  length2*length2*ang_veloc2*ang_veloc2 + 2*length*length2*ang_veloc*ang_veloc2*(float)Math.cos(ang-ang2))));
+  //potential = grav*(0.5*(mass1*(piny+length-y2)) + 0.5*(mass2*(piny+2*length2-y3)));
+  potential = 0.5*grav*(mass1*(length-length*(float)Math.cos(ang))+mass2*(length+length2-(length*(float)Math.cos(ang)+length2*(float)Math.cos(ang2))));
   //println("kenetic: " + ken + ", potential: " + potential + ", total: " + (potential+ken));
   
   if(pend2){
     float xp2 = (float) (pinx + length * Math.sin(ang01));
     float yp2 = (float) (piny + length * Math.cos(ang01));
-    float xp3 = (float) (xp2 + length * Math.sin(ang02));
-    float yp3 = (float) (yp2 + length * Math.cos(ang02));
+    float xp3 = (float) (xp2 + length2 * Math.sin(ang02));
+    float yp3 = (float) (yp2 + length2 * Math.cos(ang02));
     fill(0);
     stroke(0);
     strokeWeight(1);
@@ -86,8 +88,8 @@ void pend3(){
     fill(255);
     if(play){
       stroke(0);
-      line(2*length+10+pinx+xtem2, ytem2, 2*length+10+pinx+xp3, yp3);
-      line(2*length+10+pinx+xtem12, ytem12, 2*length+10+pinx+xp2, yp2);
+      line((length+length2)+10+pinx+xtem2, ytem2, (length+length2)+10+pinx+xp3, yp3);
+      line((length+length2)+10+pinx+xtem12, ytem12, (length+length2)+10+pinx+xp2, yp2);
       move02();
     }
     xtem2 = xp3;
@@ -97,8 +99,8 @@ void pend3(){
   }
   if(play){
     stroke(255);
-    line(2*length+10+pinx+xtem, ytem, 2*length+10+pinx+x3, y3);
-    line(2*length+10+pinx+xtem1, ytem1, 2*length+10+pinx+x2, y2);
+    line((length+length2)+10+pinx+xtem, ytem, (length+length2)+10+pinx+x3, y3);
+    line((length+length2)+10+pinx+xtem1, ytem1, (length+length2)+10+pinx+x2, y2);
     stroke(0);
     move2();
   }
@@ -187,16 +189,17 @@ void mousePressed(){
 }
 
 void move2(){
-  float denom = (length*(2*mass1+mass2-mass2*(float)Math.cos(2*ang-2*ang2)));
+  float denom1 = (length*(2*mass1+mass2-mass2*(float)Math.cos(2*ang-2*ang2)));
+  float denom2 = (length2*(2*mass1+mass2-mass2*(float)Math.cos(2*ang-2*ang2)));
   
   float ang_acc1 = (-1*grav*(2*mass1+mass2)*(float)Math.sin(ang) - 
   grav*mass2*(float)Math.sin(ang-2*ang2) - 
-  2*(float)Math.sin(ang-ang2)*mass2*(ang_veloc2*ang_veloc2*length+ang_veloc*ang_veloc*length*(float)Math.cos(ang-ang2))) / 
-  denom;
+  2*(float)Math.sin(ang-ang2)*mass2*(ang_veloc2*ang_veloc2*length2+ang_veloc*ang_veloc*length*(float)Math.cos(ang-ang2))) / 
+  denom1;
   
   float ang_acc2 = (2*(float)Math.sin(ang-ang2)*(ang_veloc*ang_veloc*length*(mass1+mass2) + 
-  grav*(mass1+mass2)*(float)Math.cos(ang) + ang_veloc2*ang_veloc2*length*mass2*(float)Math.cos(ang-ang2))) / 
-  denom;
+  grav*(mass1+mass2)*(float)Math.cos(ang) + ang_veloc2*ang_veloc2*length2*mass2*(float)Math.cos(ang-ang2))) / 
+  denom2;
   
   float vtover21 = ang_veloc + 0.5*ang_acc1*dt;
   float vtover22 = ang_veloc2 + 0.5*ang_acc2*dt;
@@ -218,37 +221,38 @@ void move2(){
 }
 
 float get_acc1(float x1, float x2, float v1, float v2){
-  float denom = (length*(2*mass1+mass2-mass2*(float)Math.cos(2*x1-2*x2)));
+  float denom1 = (length*(2*mass1+mass2-mass2*(float)Math.cos(2*x1-2*x2)));
   
   float ang_acc1 = (-1*grav*(2*mass1+mass2)*(float)Math.sin(x1) - 
   grav*mass2*(float)Math.sin(x1-2*x2) - 
-  2*(float)Math.sin(x1-x2)*mass2*(v2*v2*length+v1*v1*length*(float)Math.cos(x1-x2))) / 
-  denom;
+  2*(float)Math.sin(x1-x2)*mass2*(v2*v2*length2+v1*v1*length*(float)Math.cos(x1-x2))) / 
+  denom1;
   
   return ang_acc1;
 }
 
 float get_acc2(float x1, float x2, float v1, float v2){
-  float denom = (length*(2*mass1+mass2-mass2*(float)Math.cos(2*x1-2*x2)));
+  float denom = (length2*(2*mass1+mass2-mass2*(float)Math.cos(2*x1-2*x2)));
   
   float ang_acc2 = (2*(float)Math.sin(x1-x2)*(v1*v1*length*(mass1+mass2) + 
-  grav*(mass1+mass2)*(float)Math.cos(x1) + v2*v2*length*mass2*(float)Math.cos(x1-x2))) / 
+  grav*(mass1+mass2)*(float)Math.cos(x1) + v2*v2*length2*mass2*(float)Math.cos(x1-x2))) / 
   denom;
   
   return ang_acc2;
 }
 
 void move02(){
-  float denom = (length*(2*mass1+mass2-mass2*(float)Math.cos(2*ang01-2*ang02)));
+  float denom1 = (length*(2*mass1+mass2-mass2*(float)Math.cos(2*ang01-2*ang02)));
+  float denom2 = (length2*(2*mass1+mass2-mass2*(float)Math.cos(2*ang01-2*ang02)));
   
   float ang_acc01 = (-1*grav*(2*mass1+mass2)*(float)Math.sin(ang01) - 
   grav*mass2*(float)Math.sin(ang01-2*ang02) - 
-  2*(float)Math.sin(ang01-ang02)*mass2*(ang_veloc02*ang_veloc02*length+ang_veloc01*ang_veloc01*length*(float)Math.cos(ang01-ang02))) / 
-  denom;
+  2*(float)Math.sin(ang01-ang02)*mass2*(ang_veloc02*ang_veloc02*length2+ang_veloc01*ang_veloc01*length*(float)Math.cos(ang01-ang02))) / 
+  denom1;
   
   float ang_acc02 = (2*(float)Math.sin(ang01-ang02)*(ang_veloc01*ang_veloc01*length*(mass1+mass2) + 
-  grav*(mass1+mass2)*(float)Math.cos(ang01) + ang_veloc02*ang_veloc02*length*mass2*(float)Math.cos(ang01-ang02))) / 
-  denom;
+  grav*(mass1+mass2)*(float)Math.cos(ang01) + ang_veloc02*ang_veloc02*length2*mass2*(float)Math.cos(ang01-ang02))) / 
+  denom2;
   
   float vtover21 = ang_veloc01 + 0.5*ang_acc01*dt;
   float vtover22 = ang_veloc02 + 0.5*ang_acc02*dt;
@@ -273,6 +277,7 @@ void phase(){
   line(500, 650, 500+plot_L, 650);
   line(500, 650, 500, 650-plot_L);
   if(play){
+    stroke(0,50);
     line(prev_x, prev_y, (float)((Math.sin(ang)) + Math.sin(ang2))*0.25*plot_L + 500 + 0.5*plot_L, 600 - 0.5*plot_L*(ang_veloc2));
   }
   prev_x = (float)((Math.sin(ang)) + Math.sin(ang2))*0.25*plot_L + 500 + 0.5*plot_L;
